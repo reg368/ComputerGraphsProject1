@@ -47,7 +47,6 @@
 		<Unit filename="include/Model_OBJ.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Model_OBJ.cpp" />
-		<Unit filename="src/ObjLoader.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

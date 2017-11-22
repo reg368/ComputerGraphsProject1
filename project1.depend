@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1511272753 source:c:\users\user\desktop\yzucs\yzucshomework\1061computer graphics\opengl\project1\main.cpp
+1511330265 source:c:\users\user\desktop\yzucs\yzucshomework\1061computer graphics\opengl\project1\main.cpp
 	<GLUT/glut.h>
 	<GL/glut.h>
 	<stdlib.h>
@@ -39,4 +39,29 @@
 	"Model_OBJ.h"
 
 1511272690 source:c:\users\user\desktop\yzucs\yzucshomework\1061computer graphics\opengl\project1\src\objloader.cpp
+
+1511356595 source:c:\users\user\desktop\yzucs\yzucshomework\1061computer_graphics\opengl\project1\src\model_obj.cpp
+	"Model_OBJ.h"
+
+1511272538 c:\users\user\desktop\yzucs\yzucshomework\1061computer_graphics\opengl\project1\include\model_obj.h
+	<windows.h>
+	<iostream>
+	<fstream>
+	<stdio.h>
+	<string.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<GL/glut.h>
+	<iostream>
+	<sstream>
+	<fstream>
+	<string>
+	<vector>
+	<cmath>
+
+1511355546 source:c:\users\user\desktop\yzucs\yzucshomework\1061computer_graphics\opengl\project1\main.cpp
+	<GLUT/glut.h>
+	<GL/glut.h>
+	<stdlib.h>
+	"Model_OBJ.h"
 

@@ -19,16 +19,20 @@ void display()
    //第一個座標是攝影機的位置座標
    //第二個座標是攝影機所要拍攝的物體位置座標,只是要確定拍攝方向
    //第三個座標是攝影機正上方的向量
-	gluLookAt( 0,1,100, 0,0,0, 0,1,0);
-	glPushMatrix();
-        //glRotatef(angle , x ,y ,z)
-        //angle 正負影響選轉方向 大小影響旋轉速度
-        //x,y,z 正負影響旋轉方向 , 大小影響旋轉位置
-		glRotatef(g_rotation,0,1,0);
-		glRotatef(90,0,1,0);
-		g_rotation = g_rotation + 0.05;  //旋轉速度遞增的越少轉越慢
-		obj.Draw();
-	glPopMatrix();
+	gluLookAt( 20,0,50, 20,0,0, 0,1,0);
+
+	for(int i = 0; i < 5; i++) {
+        glPushMatrix();
+            glTranslatef(i*10, 0, 0);
+            //glRotatef(angle , x ,y ,z)
+            //angle 正負影響選轉方向 大小影響旋轉速度
+            //x,y,z 正負影響旋轉方向 , 大小影響旋轉位置
+            glRotatef(g_rotation,0,1,0);
+            glRotatef(90,0,1,0);
+            g_rotation = g_rotation + 0.02;  //旋轉速度遞增的越少轉越慢
+            obj.Draw();
+        glPopMatrix();
+	}
 	glutSwapBuffers();
 }
 
@@ -96,7 +100,7 @@ int main(int argc, char *argv[])
 	glutIdleFunc( display );									// register Idle Function
     glutKeyboardFunc( keyboard );								// register Keyboard Handler
 	initialize();
-	obj.Load("C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer Graphics/opengl/project1/obj/teddy.obj");
+	obj.Load("C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/cow.obj");
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
 }
