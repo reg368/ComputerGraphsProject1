@@ -56,7 +56,7 @@ class Model_OBJ
   public:
 	Model_OBJ();
     float* calculateNormal(float* coord1,float* coord2,float* coord3 );
-    int Load(char *filename);	// Loads the model
+    int Load(char* filearray[]);	// Loads the model
 	void Draw();					// Draws the model on the screen
 	void Release();				// Release the model
 
@@ -65,6 +65,12 @@ class Model_OBJ
 	float* vertexBuffer;					// Stores the points which make the object
 	long TotalConnectedPoints;				// Stores the total number of connected verteces
 	long TotalConnectedTriangles;			// Stores the total number of connected triangles
+
+	std::vector<float*> v_normals;
+	std::vector<float*> v_Faces_Triangles;
+	std::vector<float*> v_vertexBuffer;
+	std::vector<long> v_TotalConnectedPoints;
+	std::vector<long> v_TotalConnectedTriangles;
 
 };
 

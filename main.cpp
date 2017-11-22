@@ -9,6 +9,8 @@
 Model_OBJ obj;
 float g_rotation;
 glutWindow win;
+char* filearray[] = {"C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/cow.obj",
+                     "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/newcow.obj"};
 
 void display()
 {
@@ -21,7 +23,8 @@ void display()
    //第三個座標是攝影機正上方的向量
 	gluLookAt( 20,0,50, 20,0,0, 0,1,0);
 
-	for(int i = 0; i < 5; i++) {
+	for( unsigned int i = 0; i < sizeof(filearray)/sizeof(filearray[0]); i = i + 1 )
+    {
         glPushMatrix();
             glTranslatef(i*10, 0, 0);
             //glRotatef(angle , x ,y ,z)
@@ -32,7 +35,7 @@ void display()
             g_rotation = g_rotation + 0.02;  //旋轉速度遞增的越少轉越慢
             obj.Draw();
         glPopMatrix();
-	}
+    }
 	glutSwapBuffers();
 }
 
@@ -100,7 +103,7 @@ int main(int argc, char *argv[])
 	glutIdleFunc( display );									// register Idle Function
     glutKeyboardFunc( keyboard );								// register Keyboard Handler
 	initialize();
-	obj.Load("C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/cow.obj");
+	obj.Load(filearray);
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
 }
