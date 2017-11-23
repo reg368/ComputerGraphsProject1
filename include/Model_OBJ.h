@@ -1,17 +1,5 @@
 #ifndef MODEL_OBJ_H
 #define MODEL_OBJ_H
-
-/*
- *
- * Demonstrates how to load and display an Wavefront OBJ file.
- * Using triangles and normals as static object. No texture mapping.
- *
- * OBJ files must be triangulated!!!
- * Non triangulated objects wont work!
- * You can use Blender to triangulate
- *
- */
-
 #include <windows.h>
 #include <iostream>
 #include <fstream>
@@ -56,8 +44,8 @@ class Model_OBJ
   public:
 	Model_OBJ();
     float* calculateNormal(float* coord1,float* coord2,float* coord3 );
-    int Load(char* filearray[]);	// Loads the model
-	void Draw();					// Draws the model on the screen
+    int Load(string filearray[],int arrsize);	// Loads the model
+	void Draw(int i);					// Draws the model on the screen
 	void Release();				// Release the model
 
 	float* normals;							// Stores the normals

@@ -40,10 +40,10 @@
 
 1511272690 source:c:\users\user\desktop\yzucs\yzucshomework\1061computer graphics\opengl\project1\src\objloader.cpp
 
-1511358695 source:c:\users\user\desktop\yzucs\yzucshomework\1061computer_graphics\opengl\project1\src\model_obj.cpp
+1511407729 source:c:\users\user\desktop\yzucs\yzucshomework\1061computer_graphics\opengl\project1\src\model_obj.cpp
 	"Model_OBJ.h"
 
-1511358695 c:\users\user\desktop\yzucs\yzucshomework\1061computer_graphics\opengl\project1\include\model_obj.h
+1511408179 c:\users\user\desktop\yzucs\yzucshomework\1061computer_graphics\opengl\project1\include\model_obj.h
 	<windows.h>
 	<iostream>
 	<fstream>
@@ -59,7 +59,7 @@
 	<vector>
 	<cmath>
 
-1511358625 source:c:\users\user\desktop\yzucs\yzucshomework\1061computer_graphics\opengl\project1\main.cpp
+1511408160 source:c:\users\user\desktop\yzucs\yzucshomework\1061computer_graphics\opengl\project1\main.cpp
 	<GLUT/glut.h>
 	<GL/glut.h>
 	<stdlib.h>

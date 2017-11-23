@@ -9,8 +9,7 @@
 Model_OBJ obj;
 float g_rotation;
 glutWindow win;
-char* filearray[] = {"C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/cow.obj",
-                     "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/newcow.obj"};
+string filearray[4];
 
 void display()
 {
@@ -33,7 +32,7 @@ void display()
             glRotatef(g_rotation,0,1,0);
             glRotatef(90,0,1,0);
             g_rotation = g_rotation + 0.02;  //旋轉速度遞增的越少轉越慢
-            obj.Draw();
+            obj.Draw(i);
         glPopMatrix();
     }
 	glutSwapBuffers();
@@ -103,7 +102,13 @@ int main(int argc, char *argv[])
 	glutIdleFunc( display );									// register Idle Function
     glutKeyboardFunc( keyboard );								// register Keyboard Handler
 	initialize();
-	obj.Load(filearray);
+
+    filearray[0] = "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/cow.obj";
+    filearray[1] = "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/newcow.obj";
+    filearray[2] = "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/teddy.obj";
+    filearray[3] = "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/newcow.obj";
+
+	obj.Load(filearray,sizeof(filearray)/sizeof(filearray[0]));
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
 }

@@ -41,14 +41,15 @@ float* Model_OBJ::calculateNormal( float *coord1, float *coord2, float *coord3 )
 }
 
 
-int Model_OBJ::Load(char* filearray[])
+int Model_OBJ::Load(string filearray[],int arrsize)
 {
 
-    for( unsigned int i = 0; i < sizeof(filearray)/sizeof(filearray[0]); i = i + 1 )
+    for( unsigned int i = 0; i < arrsize ; i = i + 1 )
     {
-        char* filename = filearray[i];
+        const char *filename = filearray[i].c_str();
         string line;
         ifstream objFile (filename);
+
         if (objFile.is_open())													// If obj file is open, continue
         {
             objFile.seekg (0, ios::end);										// Go to end of the file,
@@ -129,6 +130,19 @@ int Model_OBJ::Load(char* filearray[])
                     TotalConnectedTriangles += TOTAL_FLOATS_IN_TRIANGLE;
                 }
             }
+
+
+            v_normals.push_back(normals);
+            v_Faces_Triangles.push_back(Faces_Triangles);
+            v_vertexBuffer.push_back(vertexBuffer);
+            v_TotalConnectedPoints.push_back(TotalConnectedPoints);
+            v_TotalConnectedTriangles.push_back(TotalConnectedTriangles);
+
+
+            this->TotalConnectedPoints = 0;
+            this->TotalConnectedTriangles = 0;
+
+
             objFile.close();														// Close OBJ file
         }
         else
@@ -147,14 +161,14 @@ void Model_OBJ::Release()
 	free(this->vertexBuffer);
 }
 
-void Model_OBJ::Draw()
+void Model_OBJ::Draw(int i)
 {
  	glEnableClientState(GL_VERTEX_ARRAY);						// Enable vertex arrays
- 	glEnableClientState(GL_NORMAL_ARRAY);						// Enable normal arrays
+ 	glEnableClientState(GL_NORMAL_ARRAY);                       // Enable normal arrays
 
-	glVertexPointer(3,GL_FLOAT,	0,Faces_Triangles);				// Vertex Pointer to triangle array
-	glNormalPointer(GL_FLOAT, 0, normals);						// Normal pointer to normal array
-	glDrawArrays(GL_TRIANGLES, 0, TotalConnectedTriangles);		// Draw the triangles
+	glVertexPointer(3,GL_FLOAT,	0,v_Faces_Triangles[i]);				// Vertex Pointer to triangle array
+	glNormalPointer(GL_FLOAT, 0, v_normals[i]);						// Normal pointer to normal array
+	glDrawArrays(GL_TRIANGLES, 0, v_TotalConnectedTriangles[i]);		// Draw the triangles
 
 	glDisableClientState(GL_VERTEX_ARRAY);						// Disable vertex arrays
 	glDisableClientState(GL_NORMAL_ARRAY);						// Disable normal arrays
