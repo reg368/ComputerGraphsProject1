@@ -40,11 +40,11 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-   //嚙踝蕭嚙線嚙踝蕭嚙緙嚙請及歹蕭V
-   //------gluLookAt( x1 , y1 , z1 , x2 , y2 , z2 , x3 , y3 , z3 ) 嚙踝蕭9嚙諉參數，嚙瞇嚙踝蕭3嚙諉座嚙踝蕭嚙瘢,嚙踝蕭嚙瞌嚙踝蕭荇y嚙踝蕭嚙瘢嚙瞎嚙瑾嚙諉向嚙緬
-   //嚙衝一嚙諉座嚙請是嚙踝蕭v嚙踝蕭嚙踝蕭嚙踝蕭m嚙緙嚙踝蕭
-   //嚙衝二嚙諉座嚙請是嚙踝蕭v嚙踝蕭嚙課要嚙踝蕭嚙賦的嚙踝蕭嚙踝蕭嚙練嚙緙嚙踝蕭,嚙線嚙瞌嚙緯嚙確嚙緩嚙踝蕭嚙踝蕭嚙碾
-   //嚙衝三嚙諉座嚙請是嚙踝蕭v嚙踝蕭嚙踝蕭嚙磕嚙質的嚙碾嚙緬
+   //視線的座標及方向
+   //------gluLookAt( x1 , y1 , z1 , x2 , y2 , z2 , x3 , y3 , z3 ) 有9個參數，代表3個座標點,其實是兩個座標點和一個向量
+   //第一個座標是攝影機的位置座標
+   //第二個座標是攝影機所要拍攝的物體位置座標,只是要確定拍攝方向
+   //第三個座標是攝影機正上方的向量
 	gluLookAt( 20,0,50, 20,0,0, 0,1,0);
 
     for(int i=0;i<objs.size();i++)
@@ -53,11 +53,11 @@ void display()
             glTranslatef(objs[i]->get_x(), objs[i]->get_y(), objs[i]->get_z());
 
             //glRotatef(angle , x ,y ,z)
-            //angle 嚙踝蕭嚙緣嚙緞嚙確嚙踝蕭嚙踝蕭嚙碾 嚙篌嚙緘嚙緞嚙確嚙踝蕭嚙踝蕭t嚙踝蕭
-            //x,y,z 嚙踝蕭嚙緣嚙緞嚙確嚙踝蕭嚙踝蕭嚙碾 , 嚙篌嚙緘嚙緞嚙確嚙踝蕭嚙踝蕭嚙練
+            //angle 正負影響選轉方向 大小影響旋轉速度
+            //x,y,z 正負影響旋轉方向 , 大小影響旋轉位置
             glRotatef(g_rotation,0,1,0);
             glRotatef(90,0,1,0);
-            g_rotation = g_rotation + 0.2;  //嚙踝蕭嚙踝蕭t嚙論鳴蕭嚙磕嚙踝蕭嚙碾嚙踝蕭嚙踝蕭V嚙瘠
+            g_rotation = g_rotation + 0.2;  //旋轉速度遞增的越少轉越慢
             //obj.Draw(i);
             objs[i]->Draw();
         glPopMatrix();
