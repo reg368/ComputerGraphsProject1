@@ -6,30 +6,66 @@
 #include <stdlib.h>
 #include "Model_OBJ.h"
 
+std::vector<Model_OBJ*> objs;
 Model_OBJ obj;
 float g_rotation;
 glutWindow win;
+const char* filearray[] = {
+    "./data/cow.obj",
+    "./data/newcow.obj"
+
+};
+bool finish_without_update = false;
+
+float g_fps( void (*func)(void), int n_frame )
+{
+  clock_t start, finish;
+  int i;
+  float fps;
+
+  printf( "Performing benchmark, please wait" );
+    start = clock();
+    for( i=0; i<n_frame; i++ )
+    {
+     func();
+    }
+    printf( "done\n" );
+    finish = clock();
+
+  fps = float(n_frame)/(finish-start)*CLOCKS_PER_SEC;
+  return fps;
+}
 
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-   //µø½uªº®y¼Ð¤Î¤è¦V
-   //------gluLookAt( x1 , y1 , z1 , x2 , y2 , z2 , x3 , y3 , z3 ) ¦³9­Ó°Ñ¼Æ¡A¥Nªí3­Ó®y¼ÐÂI,¨ä¹ê¬O¨â­Ó®y¼ÐÂI©M¤@­Ó¦V¶q
-   //²Ä¤@­Ó®y¼Ð¬OÄá¼v¾÷ªº¦ì¸m®y¼Ð
-   //²Ä¤G­Ó®y¼Ð¬OÄá¼v¾÷©Ò­n©çÄáªºª«Åé¦ì¸m®y¼Ð,¥u¬O­n½T©w©çÄá¤è¦V
-   //²Ä¤T­Ó®y¼Ð¬OÄá¼v¾÷¥¿¤W¤èªº¦V¶q
-	gluLookAt( 0,1,100, 0,0,0, 0,1,0);
-	glPushMatrix();
-        //glRotatef(angle , x ,y ,z)
-        //angle ¥¿­t¼vÅT¿ïÂà¤è¦V ¤j¤p¼vÅT±ÛÂà³t«×
-        //x,y,z ¥¿­t¼vÅT±ÛÂà¤è¦V , ¤j¤p¼vÅT±ÛÂà¦ì¸m
-		glRotatef(g_rotation,0,1,0);
-		glRotatef(90,0,1,0);
-		g_rotation = g_rotation + 0.05;  //±ÛÂà³t«×»¼¼Wªº¶V¤ÖÂà¶VºC
-		obj.Draw();
-	glPopMatrix();
-	glutSwapBuffers();
+   //ï¿½ï¿½ï¿½uï¿½ï¿½ï¿½yï¿½Ð¤Î¤ï¿½V
+   //------gluLookAt( x1 , y1 , z1 , x2 , y2 , z2 , x3 , y3 , z3 ) ï¿½ï¿½9ï¿½Ó°Ñ¼Æ¡Aï¿½Nï¿½ï¿½3ï¿½Ó®yï¿½ï¿½ï¿½I,ï¿½ï¿½ï¿½Oï¿½ï¿½Ó®yï¿½ï¿½ï¿½Iï¿½Mï¿½@ï¿½Ó¦Vï¿½q
+   //ï¿½Ä¤@ï¿½Ó®yï¿½Ð¬Oï¿½ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½mï¿½yï¿½ï¿½
+   //ï¿½Ä¤Gï¿½Ó®yï¿½Ð¬Oï¿½ï¿½vï¿½ï¿½ï¿½Ò­nï¿½ï¿½ï¿½áªºï¿½ï¿½ï¿½ï¿½ï¿½mï¿½yï¿½ï¿½,ï¿½uï¿½Oï¿½nï¿½Tï¿½wï¿½ï¿½ï¿½ï¿½ï¿½V
+   //ï¿½Ä¤Tï¿½Ó®yï¿½Ð¬Oï¿½ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½èªºï¿½Vï¿½q
+	gluLookAt( 20,0,50, 20,0,0, 0,1,0);
+
+    for(int i=0;i<objs.size();i++)
+    {
+        glPushMatrix();
+            glTranslatef(objs[i]->get_x(), objs[i]->get_y(), objs[i]->get_z());
+
+            //glRotatef(angle , x ,y ,z)
+            //angle ï¿½ï¿½ï¿½tï¿½vï¿½Tï¿½ï¿½ï¿½ï¿½ï¿½V ï¿½jï¿½pï¿½vï¿½Tï¿½ï¿½ï¿½ï¿½tï¿½ï¿½
+            //x,y,z ï¿½ï¿½ï¿½tï¿½vï¿½Tï¿½ï¿½ï¿½ï¿½ï¿½V , ï¿½jï¿½pï¿½vï¿½Tï¿½ï¿½ï¿½ï¿½ï¿½m
+            glRotatef(g_rotation,0,1,0);
+            glRotatef(90,0,1,0);
+            g_rotation = g_rotation + 0.2;  //ï¿½ï¿½ï¿½ï¿½tï¿½×»ï¿½ï¿½Wï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½ï¿½Vï¿½C
+            //obj.Draw(i);
+            objs[i]->Draw();
+        glPopMatrix();
+    }
+    if( finish_without_update )
+        glFinish();
+    else
+        glutSwapBuffers();
 }
 
 
@@ -43,7 +79,8 @@ void initialize ()
 	gluPerspective(win.field_of_view_angle, aspect, win.z_near, win.z_far);
     glMatrixMode(GL_MODELVIEW);
     glShadeModel( GL_SMOOTH );
-    glClearColor( 0.0f, 0.1f, 0.0f, 0.5f );
+    //glClearColor( 0.0f, 0.1f, 0.0f, 0.5f );
+    glClearColor(1.0, 1.0, 0.6, 1.0);
     glClearDepth( 1.0f );
     glEnable( GL_DEPTH_TEST );
     glDepthFunc( GL_LEQUAL );
@@ -72,6 +109,14 @@ void keyboard ( unsigned char key, int x, int y )
     case KEY_ESCAPE:
       exit ( 0 );
       break;
+    
+    case 'F':
+    case 'f':
+     finish_without_update = true;
+     printf( "%f fps\n", g_fps( display, 100 ) );
+     finish_without_update = false;
+     break;
+     
     default:
       break;
   }
@@ -80,12 +125,15 @@ void keyboard ( unsigned char key, int x, int y )
 int main(int argc, char *argv[])
 {
     // set window values
-	win.width = 640;
-	win.height = 480;
-	win.title = "OpenGL/GLUT OBJ Loader.";
+	win.width = 1280;
+	win.height = 800;
+	win.title = (char*)"cs569 project1 demo";
 	win.field_of_view_angle = 45;
 	win.z_near = 1.0f;
 	win.z_far = 500.0f;
+
+	srand (time(NULL));
+
 
 	// initialize and run program
 	glutInit(&argc, argv);                                      // GLUT initialization
@@ -96,7 +144,17 @@ int main(int argc, char *argv[])
 	glutIdleFunc( display );									// register Idle Function
     glutKeyboardFunc( keyboard );								// register Keyboard Handler
 	initialize();
-	obj.Load("C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer Graphics/opengl/project1/obj/teddy.obj");
+
+    for(int i=0;i<100;i++){
+    		Model_OBJ *o = new Model_OBJ();
+
+        o->Load((char*)filearray[i%(sizeof(filearray)/sizeof(char*))]);
+        //o->set_xyz(i*5.0f,i%5,rand()%20);
+        o->set_xyz((rand()%100)-50,(rand()%100)-50,(rand()%500)*-1);
+
+        objs.push_back(o);
+    }
+
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
 }
