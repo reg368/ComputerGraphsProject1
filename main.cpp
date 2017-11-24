@@ -10,6 +10,9 @@ std::vector<Model_OBJ*> objs;
 Model_OBJ obj;
 float g_rotation;
 glutWindow win;
+
+int frame=0,__time,timebase=0;
+
 const char* filearray[] = {
     "./data/cow.obj",
     "./data/newcow.obj"
@@ -36,8 +39,40 @@ float g_fps( void (*func)(void), int n_frame )
   return fps;
 }
 
+void renderBitmapString(
+		float x,
+		float y,
+		float z,
+		void *font,
+		char *string) {
+
+  char *c;
+  glRasterPos3f(x, y,z);
+  for (c=string; *c != '\0'; c++) {
+    glutBitmapCharacter(font, *c);
+  }
+}
+
+void show_fps()
+{
+    static char s[128];
+    frame++;
+    __time=glutGet(GLUT_ELAPSED_TIME);
+    if (__time - timebase > 1000) {
+        sprintf(s,"FPS:%4.2f",
+            frame*1000.0/(__time-timebase));
+        timebase = __time;
+        frame = 0;
+    }
+
+    glPushMatrix();
+    renderBitmapString(0,0,0,(void *)GLUT_BITMAP_HELVETICA_18, s);
+    glPopMatrix();
+}
+
 void display()
 {
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     //視線的座標及方向
@@ -61,6 +96,8 @@ void display()
             objs[i]->Draw();
         glPopMatrix();
     }
+    show_fps();
+        
     if( finish_without_update )
         glFinish();
     else
