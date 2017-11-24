@@ -9,7 +9,7 @@
 Model_OBJ obj;
 float g_rotation;
 glutWindow win;
-string filearray[4];
+string filearray[3];
 
 void display()
 {
@@ -20,7 +20,7 @@ void display()
    //第一個座標是攝影機的位置座標
    //第二個座標是攝影機所要拍攝的物體位置座標,只是要確定拍攝方向
    //第三個座標是攝影機正上方的向量
-	gluLookAt( 20,0,50, 20,0,0, 0,1,0);
+	gluLookAt( -10,0,10, 20,0,0, 0,1,0);
 
 	for( unsigned int i = 0; i < sizeof(filearray)/sizeof(filearray[0]); i = i + 1 )
     {
@@ -86,8 +86,8 @@ void keyboard ( unsigned char key, int x, int y )
 int main(int argc, char *argv[])
 {
     // set window values
-	win.width = 640;
-	win.height = 480;
+	win.width = 680;
+	win.height = 400;
 	win.title = "OpenGL/GLUT OBJ Loader.";
 	win.field_of_view_angle = 45;
 	win.z_near = 1.0f;
@@ -103,10 +103,9 @@ int main(int argc, char *argv[])
     glutKeyboardFunc( keyboard );								// register Keyboard Handler
 	initialize();
 
-    filearray[0] = "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/cow.obj";
-    filearray[1] = "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/newcow.obj";
-    filearray[2] = "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/teddy.obj";
-    filearray[3] = "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/newcow.obj";
+    filearray[0] = "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/suzanne.obj";
+    filearray[1] = "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/two-sided.obj";
+    filearray[2] = "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/cow.obj";
 
 	obj.Load(filearray,sizeof(filearray)/sizeof(filearray[0]));
 	glutMainLoop();												// run GLUT mainloop
