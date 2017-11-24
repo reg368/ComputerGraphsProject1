@@ -38,15 +38,14 @@ float g_fps( void (*func)(void), int n_frame )
 
 void display()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-   //視線的座標及方向
-   //------gluLookAt( x1 , y1 , z1 , x2 , y2 , z2 , x3 , y3 , z3 ) 有9個參數，代表3個座標點,其實是兩個座標點和一個向量
-   //第一個座標是攝影機的位置座標
-   //第二個座標是攝影機所要拍攝的物體位置座標,只是要確定拍攝方向
-   //第三個座標是攝影機正上方的向量
-	gluLookAt( 20,0,50, 20,0,0, 0,1,0);
-
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+    //視線的座標及方向
+    //------gluLookAt( x1 , y1 , z1 , x2 , y2 , z2 , x3 , y3 , z3 ) 有9個參數，代表3個座標點,其實是兩個座標點和一個向量
+    //第一個座標是攝影機的位置座標
+    //第二個座標是攝影機所要拍攝的物體位置座標,只是要確定拍攝方向
+    //第三個座標是攝影機正上方的向量
+    gluLookAt( 20,0,50, 20,0,0, 0,1,0);
     for(int i=0;i<objs.size();i++)
     {
         glPushMatrix();
@@ -55,9 +54,9 @@ void display()
             //glRotatef(angle , x ,y ,z)
             //angle 正負影響選轉方向 大小影響旋轉速度
             //x,y,z 正負影響旋轉方向 , 大小影響旋轉位置
-            glRotatef(g_rotation,0,1,0);
-            glRotatef(90,0,1,0);
-            g_rotation = g_rotation + 0.2;  //旋轉速度遞增的越少轉越慢
+            glRotatef(objs[i]->get_a(),(i%3)==0,(i%3)==1,(i%3)==2);
+            //glRotatef(90,0,1,0);
+            objs[i]->set_a((objs[i]->get_a()+rand()%10));
             //obj.Draw(i);
             objs[i]->Draw();
         glPopMatrix();
@@ -72,11 +71,11 @@ void display()
 void initialize ()
 {
     glMatrixMode(GL_PROJECTION);
-	glViewport(0, 0, win.width, win.height);
-	GLfloat aspect = (GLfloat) win.width / win.height;
+    glViewport(0, 0, win.width, win.height);
+    GLfloat aspect = (GLfloat) win.width / win.height;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-	gluPerspective(win.field_of_view_angle, aspect, win.z_near, win.z_far);
+    gluPerspective(win.field_of_view_angle, aspect, win.z_near, win.z_far);
     glMatrixMode(GL_MODELVIEW);
     glShadeModel( GL_SMOOTH );
     //glClearColor( 0.0f, 0.1f, 0.0f, 0.5f );
@@ -125,38 +124,39 @@ void keyboard ( unsigned char key, int x, int y )
 int main(int argc, char *argv[])
 {
     // set window values
-	win.width = 1280;
-	win.height = 800;
-	win.title = (char*)"cs569 project1 demo";
-	win.field_of_view_angle = 45;
-	win.z_near = 1.0f;
-	win.z_far = 500.0f;
+    win.width = 1280;
+    win.height = 800;
+    win.title = (char*)"cs569 project1 demo";
+    win.field_of_view_angle = 45;
+    win.z_near = 1.0f;
+    win.z_far = 500.0f;
 
-	srand (time(NULL));
+    srand (time(NULL));
 
 
-	// initialize and run program
-	glutInit(&argc, argv);                                      // GLUT initialization
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );  // Display Mode
-	glutInitWindowSize(win.width,win.height);					// set window size
-	glutCreateWindow(win.title);								// create Window
-	glutDisplayFunc(display);									// register Display Function
-	glutIdleFunc( display );									// register Idle Function
-    glutKeyboardFunc( keyboard );								// register Keyboard Handler
-	initialize();
+    // initialize and run program
+    glutInit(&argc, argv);                                      // GLUT initialization
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );  // Display Mode
+    glutInitWindowSize(win.width,win.height);                   // set window size
+    glutCreateWindow(win.title);                                // create Window
+    glutDisplayFunc(display);                                   // register Display Function
+    glutIdleFunc( display );                                    // register Idle Function
+    glutKeyboardFunc( keyboard );                               // register Keyboard Handler
+    initialize();
 
     for(int i=0;i<100;i++){
-    		Model_OBJ *o = new Model_OBJ();
+        Model_OBJ *o = new Model_OBJ();
 
         o->Load((char*)filearray[i%(sizeof(filearray)/sizeof(char*))]);
-        //o->set_xyz(i*5.0f,i%5,rand()%20);
+        //o->Load((char*)filearray[1]);
         o->set_xyz((rand()%100)-50,(rand()%100)-50,(rand()%500)*-1);
+        o->set_a(rand()%360);
 
         objs.push_back(o);
     }
 
-	glutMainLoop();												// run GLUT mainloop
-	return 0;
+    glutMainLoop();                                             // run GLUT mainloop
+    return 0;
 }
 
 

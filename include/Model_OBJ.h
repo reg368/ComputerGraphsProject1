@@ -31,12 +31,12 @@ using namespace std;
 
 typedef struct {
     int width;
-	int height;
-	char* title;
+    int height;
+    char* title;
 
-	float field_of_view_angle;
-	float z_near;
-	float z_far;
+    float field_of_view_angle;
+    float z_near;
+    float z_far;
 } glutWindow;
 
 
@@ -48,29 +48,35 @@ typedef struct {
 class Model_OBJ
 {
   private:
-	float _x,_y,_z;
+    float _x,_y,_z;
+    float _a;
 
   public:
-	Model_OBJ();
+    Model_OBJ();
     float* calculateNormal(float* coord1,float* coord2,float* coord3 );
-    int Load(char *filename);	// Loads the model
-	void Draw();					// Draws the model on the screen
-	void Release();				// Release the model
-	void set_xyz(float x, float y, float z){
-		_x = x*1.0f;
-		_y = y*1.0f;
-		_z = z*1.0f;
-	};
+    int Load(char *filename);       // Loads the model
+    void Draw();                    // Draws the model on the screen
+    void Release();                 // Release the model
+    void set_xyz(float x, float y, float z){
+        _x = x*1.0f;
+        _y = y*1.0f;
+        _z = z*1.0f;
+    };
+    void set_a(float a){ 
+        if(a > 360) a-= 360;
+        _a = a*1.0f;
+    };
 
-	float get_x(){ return _x;};
-	float get_y(){ return _y;};
-	float get_z(){ return _z;};
+    float get_x(){ return _x;};
+    float get_y(){ return _y;};
+    float get_z(){ return _z;};
+    float get_a(){ return _a;};
 
-	float* normals;							// Stores the normals
-    float* Faces_Triangles;					// Stores the triangles
-	float* vertexBuffer;					// Stores the points which make the object
-	long TotalConnectedPoints;				// Stores the total number of connected verteces
-	long TotalConnectedTriangles;			// Stores the total number of connected triangles
+    float* normals;                         // Stores the normals
+    float* Faces_Triangles;                 // Stores the triangles
+    float* vertexBuffer;                    // Stores the points which make the object
+    long TotalConnectedPoints;              // Stores the total number of connected verteces
+    long TotalConnectedTriangles;           // Stores the total number of connected triangles
 
 
 
