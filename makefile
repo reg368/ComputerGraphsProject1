@@ -26,17 +26,20 @@ RCFLAGS_RELEASE = $(RCFLAGS)
 LIBDIR_RELEASE = $(LIBDIR)
 LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE = $(LDFLAGS)
-OBJDIR_RELEASE = obj
+OBJDIR_RELEASE = out
 OUT_RELEASE = project1
 
 OBJ_RELEASE = $(OBJDIR_RELEASE)/main.o $(OBJDIR_RELEASE)/Model_OBJ.o
 
-all: release
+all: buildenv release
 
 clean: 
 	rm $(OBJDIR_RELEASE)/*.o
 	rm $(OUT_RELEASE)
 
+buildenv:
+	mkdir -p $(OBJDIR_RELEASE)
+	
 release: $(OBJ_RELEASE)
 	$(LD) $(LIBDIR_RELEASE) -o $(OUT_RELEASE) $(OBJ_RELEASE)  $(LDFLAGS_RELEASE)$(LIB_RELEASE)
 
