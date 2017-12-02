@@ -72,7 +72,7 @@ void show_fps()
     }
 
     glPushMatrix();
-    renderBitmapString(0,0,0,(void *)GLUT_BITMAP_HELVETICA_18, s);
+    renderBitmapString(-12,18,0,(void *)GLUT_BITMAP_HELVETICA_18, s);
     glPopMatrix();
 }
 
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
     win.title = (char*)"cs569 project1 demo";
     win.field_of_view_angle = 45;
     win.z_near = 1.0f;
-    win.z_far = 500.0f;
+    win.z_far = 1000.0f;
 
     srand (time(NULL));
 
@@ -192,12 +192,18 @@ int main(int argc, char *argv[])
     printf("Test with count: %d\n", loop);
     
     for(int i=0;i<loop;i++){
+        float x, y, z, a;
         Model_OBJ *o = new Model_OBJ();
 
         o->Load((char*)filearray[i%(sizeof(filearray)/sizeof(char*))]);
-        //o->Load((char*)filearray[1]);
-        o->set_xyz((rand()%100)-50,(rand()%100)-50,(rand()%500)*-1);
-        o->set_a(rand()%360);
+
+        a = rand()%360;
+        z = (rand()%500)*-1;
+        y = (rand()%100)-50;
+        x = ((rand()%100)-50) * z/50;
+
+        o->set_xyz(x, y, z);
+        o->set_a(a);
 
         objs.push_back(o);
     }
