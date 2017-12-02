@@ -7,7 +7,6 @@
 #include <ctime>
 #include "Model_OBJ.h"
 
-
 std::vector<Model_OBJ*> objs;
 Model_OBJ obj;
 float g_rotation;
@@ -16,10 +15,15 @@ glutWindow win;
 int frame=0,__time,timebase=0;
 
 const char* filearray[] = {
-    "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/newcow.obj",
-    "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/newcow.obj",
-    "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/newcow.obj"
-
+#if 0
+    "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/cube.obj",
+    "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/teddy.obj",
+    "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/bunny.obj",
+    "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/two-sided.obj",
+    "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/venusm.obj",
+#endif
+    "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/suzanne.obj",
+    "C:/Users/user/Desktop/yzucs/yzucshomework/1061Computer_Graphics/opengl/project1/obj/cow.obj"
 };
 bool finish_without_update = false;
 
@@ -163,6 +167,7 @@ void keyboard ( unsigned char key, int x, int y )
 
 int main(int argc, char *argv[])
 {
+    int loop = 100;
     // set window values
     win.width = 1280;
     win.height = 800;
@@ -173,6 +178,7 @@ int main(int argc, char *argv[])
 
     srand (time(NULL));
 
+    if(argc > 1) loop = strtol(argv[1], NULL, 10);
 
     // initialize and run program
     glutInit(&argc, argv);                                      // GLUT initialization
@@ -184,7 +190,9 @@ int main(int argc, char *argv[])
     glutKeyboardFunc( keyboard );                               // register Keyboard Handler
     initialize();
 
-    for(int i=0;i<100;i++){
+    printf("Test with count: %d\n", loop);
+
+    for(int i=0;i<loop;i++){
         Model_OBJ *o = new Model_OBJ();
 
         o->Load((char*)filearray[i%(sizeof(filearray)/sizeof(char*))]);
@@ -198,3 +206,5 @@ int main(int argc, char *argv[])
     glutMainLoop();                                             // run GLUT mainloop
     return 0;
 }
+
+
