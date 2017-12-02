@@ -10,6 +10,7 @@
 std::vector<Model_OBJ*> objs;
 Model_OBJ obj;
 float g_rotation;
+int lookAtZ = 50;
 glutWindow win;
 
 int frame=0,__time,timebase=0;
@@ -87,7 +88,7 @@ void display()
     //第一個座標是攝影機的位置座標
     //第二個座標是攝影機所要拍攝的物體位置座標,只是要確定拍攝方向
     //第三個座標是攝影機正上方的向量
-    gluLookAt( 20,0,50, 20,0,0, 0,1,0);
+    gluLookAt( 20,0,lookAtZ, 20,0,0, 0,1,0);
     for(int i=0;i<objs.size();i++)
     {
         glPushMatrix();
@@ -159,18 +160,46 @@ void keyboard ( unsigned char key, int x, int y )
      printf( "%f fps\n", g_fps( display, 100 ) );
      finish_without_update = false;
      break;
-
     default:
+        printf("key %c "+key);
       break;
   }
+}
+
+void keyPress(int key,int x,int y)
+{
+
+    switch(key){
+        case 27 :
+            exit(0);
+            break;
+        case GLUT_KEY_UP :
+                lookAtZ += 1;
+                glutPostRedisplay();
+                printf("ZOOM OUT lookAtZ : %d \n",lookAtZ);
+            break;
+        case GLUT_KEY_DOWN :
+            if(lookAtZ > 1)
+            {
+                lookAtZ -= 1;
+                glutPostRedisplay();
+                printf("ZOOM IN lookAtZ : %d \n",lookAtZ);
+            }else
+            {
+                printf("ZOOM INT already equal to zero : %d \n",lookAtZ);
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 int main(int argc, char *argv[])
 {
     int loop = 100;
     // set window values
-    win.width = 1280;
-    win.height = 800;
+    win.width = 800;
+    win.height = 600;
     win.title = (char*)"cs569 project1 demo";
     win.field_of_view_angle = 45;
     win.z_near = 1.0f;
@@ -188,6 +217,7 @@ int main(int argc, char *argv[])
     glutDisplayFunc(display);                                   // register Display Function
     glutIdleFunc( display );                                    // register Idle Function
     glutKeyboardFunc( keyboard );                               // register Keyboard Handler
+    glutSpecialFunc(keyPress);                                  // register Keyboard zoomin/zoomout
     initialize();
 
     printf("Test with count: %d\n", loop);
