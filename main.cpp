@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <ctime>
 #include "Model_OBJ.h"
+#include <windows.h>
+#include <iostream>
+using namespace std;;
 
 std::vector<Model_OBJ*> objs;
 Model_OBJ obj;
@@ -24,9 +27,9 @@ const char* filearray[] = {
     "./obj/cube.obj",
     "./obj/teddy.obj",
 #endif
-    "./obj/b-8000.obj",
-    "./obj/suzanne.obj",
-    "./obj/cow.obj",
+    "\\obj\\b-8000.obj",
+    "\\obj\\suzanne.obj",
+    "\\obj\\cow.obj",
     0
 };
 bool finish_without_update = false;
@@ -194,8 +197,33 @@ void keyPress(int key,int x,int y)
     }
 }
 
+string ExePath(int i ) {
+    char buffer[MAX_PATH];
+    GetModuleFileName( NULL, buffer, MAX_PATH );
+    string::size_type pos = string( buffer ).find_last_of( "\\/" );
+    return string( buffer ).substr( 0, pos).append(filearray[i]);
+}
+
+char* appendCharToCharArray(char* array, char a)
+{
+    size_t len = strlen(array);
+
+    char* ret = new char[len+2];
+
+    strcpy(ret, array);
+    ret[len] = a;
+    ret[len+1] = '\0';
+
+    return ret;
+}
+
 int main(int argc, char *argv[])
 {
+
+    TCHAR full_path[MAX_PATH];
+
+    printf("my directory is : %s  \n",ExePath(0).c_str());
+
     int loop = 100;
     int seed = 100;
     char temp[256];
@@ -245,10 +273,11 @@ int main(int argc, char *argv[])
     glutSetWindowTitle(title);
 
     for(int i=0;i<loop;i++){
+
         float x, y, z, a;
         Model_OBJ *o = new Model_OBJ();
 
-        o->Load((char*)filearray[i%((sizeof(filearray)/sizeof(char*))-1)]);
+        o->Load( (char*)ExePath(i%((sizeof(filearray)/sizeof(char*))-1)).c_str());
 
         a =  rand()%360;
         z = (rand()%500)*-1;
@@ -262,5 +291,6 @@ int main(int argc, char *argv[])
     }
 
     glutMainLoop();                                             // run GLUT mainloop
+
     return 0;
 }
