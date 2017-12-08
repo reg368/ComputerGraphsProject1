@@ -30,6 +30,7 @@ const char* filearray[] = {
     "\\obj\\b-8000.obj",
     "\\obj\\suzanne.obj",
     "\\obj\\cow.obj",
+    "\\obj\\b-4000.obj",
     0
 };
 bool finish_without_update = false;
@@ -176,15 +177,18 @@ void keyPress(int key,int x,int y)
 {
 
     switch(key){
+        case 27 :
+            exit(0);
+            break;
         case GLUT_KEY_UP :
-                lookAtZ += 2;
+                lookAtZ += 1;
                 glutPostRedisplay();
                 printf("ZOOM OUT lookAtZ : %d \n",lookAtZ);
             break;
         case GLUT_KEY_DOWN :
             if(lookAtZ > 1)
             {
-                lookAtZ -= 2;
+                lookAtZ -= 1;
                 glutPostRedisplay();
                 printf("ZOOM IN lookAtZ : %d \n",lookAtZ);
             }else
