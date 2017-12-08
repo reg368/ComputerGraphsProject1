@@ -30,7 +30,6 @@ const char* filearray[] = {
     "\\obj\\b-8000.obj",
     "\\obj\\suzanne.obj",
     "\\obj\\cow.obj",
-    "\\obj\\b-4000.obj",
     0
 };
 bool finish_without_update = false;
