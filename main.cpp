@@ -23,6 +23,7 @@ const char* filearray[] = {
     "./obj/cube.obj",   
     "./obj/teddy.obj", 
 #endif
+    "./obj/b-8000.obj", 
     "./obj/suzanne.obj",
     "./obj/cow.obj",
     0  
@@ -195,6 +196,7 @@ void keyPress(int key,int x,int y)
 int main(int argc, char *argv[])
 {
     int loop = 100;
+    int seed = 100;
     char temp[256];
     char title[256] = "cs569 project1 demo [1056102 1056105]   ";
     
@@ -206,9 +208,23 @@ int main(int argc, char *argv[])
     win.z_near = 1.0f;
     win.z_far = 1000.0f;
 
-    srand (time(NULL));
 
-    if(argc > 1) loop = strtol(argv[1], NULL, 10);
+    if(argc > 1){
+        if(argv[1][0] == '-' && argv[1][1] == 'h'){
+            printf("Usage: %s <obj count> <rand seed>\n", argv[0]);
+            printf("      <obj count>: default is 100\n");
+            printf("      <rand seed>: default by time\n");
+            exit(0);
+        }else{
+            loop = strtol(argv[1], NULL, 10);
+        }
+    }
+    if(argc > 2){
+        seed = strtol(argv[2], NULL, 10);
+        srand (seed);
+    }else{
+        srand (time(NULL));
+    }
 
     // initialize and run program
     glutInit(&argc, argv);                                      // GLUT initialization
