@@ -1,9 +1,6 @@
 #ifndef MODEL_OBJ_H
 #define MODEL_OBJ_H
-<<<<<<< HEAD
-=======
 #if defined(__WIN32__)
->>>>>>> eric
 #include <windows.h>
 #endif
 #include <iostream>
@@ -66,11 +63,7 @@ class Model_OBJ
         _y = y*1.0f;
         _z = z*1.0f;
     };
-<<<<<<< HEAD
     void set_a(float a){
-=======
-    void set_a(float a){ 
->>>>>>> eric
         if(a > 360) a-= 360;
         _a = a*1.0f;
     };
