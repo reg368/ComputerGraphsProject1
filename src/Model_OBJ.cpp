@@ -48,7 +48,11 @@ int Model_OBJ::Load(char* filename)
     if (objFile.is_open())                                                  // If obj file is open, continue
     {
         objFile.seekg (0, ios::end);                                        // Go to end of the file,
+<<<<<<< HEAD
         long fileSize = objFile.tellg();                                    // get file size
+=======
+        long fileSize = objFile.tellg() * 2;                                    // get file size
+>>>>>>> eric
         objFile.seekg (0, ios::beg);                                        // we'll use this to register memory for our 3d model
 
         vertexBuffer = (float*) malloc (fileSize);                          // Allocate memory for the verteces

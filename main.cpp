@@ -12,6 +12,74 @@ Model_OBJ obj;
 float g_rotation;
 int lookAtZ = 50;
 glutWindow win;
+int lookAtZ = 50; 
+
+
+int frame=0,__time,timebase=0;
+
+const char* filearray[] = {
+#if 0
+    "./obj/two-sided.obj",
+    "./obj/venusm.obj",  
+    "./obj/bunny.obj",  
+    "./obj/cube.obj",   
+    "./obj/teddy.obj", 
+#endif
+    "./obj/suzanne.obj",
+    "./obj/cow.obj",
+    0  
+};
+bool finish_without_update = false;
+
+float g_fps( void (*func)(void), int n_frame )
+{
+  clock_t start, finish;
+  int i;
+  float fps;
+
+  printf( "Performing benchmark, please wait" );
+    start = clock();
+    for( i=0; i<n_frame; i++ )
+    {
+     func();
+    }
+    printf( "done\n" );
+    finish = clock();
+
+  fps = float(n_frame)/(finish-start)*CLOCKS_PER_SEC;
+  return fps;
+}
+
+void renderBitmapString(
+		float x,
+		float y,
+		float z,
+		void *font,
+		char *string) {
+
+  char *c;
+  glRasterPos3f(x, y,z);
+  for (c=string; *c != '\0'; c++) {
+    glutBitmapCharacter(font, *c);
+  }
+}
+
+void show_fps()
+{
+    static char s[128];
+    frame++;
+    __time=glutGet(GLUT_ELAPSED_TIME);
+    if (__time - timebase > 1000) {
+        sprintf(s,"FPS:%4.2f",
+            frame*1000.0/(__time-timebase));
+        timebase = __time;
+        frame = 0;
+    }
+
+    glPushMatrix();
+    renderBitmapString(-12,18,0,(void *)GLUT_BITMAP_HELVETICA_18, s);
+    glPopMatrix();
+}
 
 int frame=0,__time,timebase=0;
 
@@ -105,7 +173,11 @@ void display()
         glPopMatrix();
     }
     show_fps();
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> eric
     if( finish_without_update )
         glFinish();
     else
@@ -153,19 +225,28 @@ void keyboard ( unsigned char key, int x, int y )
     case KEY_ESCAPE:
       exit ( 0 );
       break;
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> eric
     case 'F':
     case 'f':
      finish_without_update = true;
      printf( "%f fps\n", g_fps( display, 100 ) );
      finish_without_update = false;
      break;
+<<<<<<< HEAD
+=======
+     
+>>>>>>> eric
     default:
         printf("key %c "+key);
       break;
   }
 }
 
+<<<<<<< HEAD
 void keyPress(int key,int x,int y)
 {
 
@@ -192,11 +273,37 @@ void keyPress(int key,int x,int y)
         default:
             break;
     }
+=======
+void keyPress(int key,int x,int y) 
+{ 
+ 
+    switch(key){ 
+        case GLUT_KEY_UP : 
+                lookAtZ += 2; 
+                glutPostRedisplay(); 
+                printf("ZOOM OUT lookAtZ : %d \n",lookAtZ); 
+            break; 
+        case GLUT_KEY_DOWN : 
+            if(lookAtZ > 1) 
+            { 
+                lookAtZ -= 2; 
+                glutPostRedisplay(); 
+                printf("ZOOM IN lookAtZ : %d \n",lookAtZ); 
+            }else 
+            { 
+                printf("ZOOM INT already equal to zero : %d \n",lookAtZ); 
+            } 
+            break; 
+        default: 
+            break; 
+    } 
+>>>>>>> eric
 }
 
 int main(int argc, char *argv[])
 {
     int loop = 100;
+<<<<<<< HEAD
     // set window values
     win.width = 800;
     win.height = 600;
@@ -204,6 +311,18 @@ int main(int argc, char *argv[])
     win.field_of_view_angle = 45;
     win.z_near = 1.0f;
     win.z_far = 500.0f;
+=======
+    char temp[256];
+    char title[256] = "cs569 project1 demo [1056102 1056105]   ";
+    
+    // set window values
+    win.width = 1280;
+    win.height = 800;
+    win.title = 0;
+    win.field_of_view_angle = 45;
+    win.z_near = 1.0f;
+    win.z_far = 1000.0f;
+>>>>>>> eric
 
     srand (time(NULL));
 
@@ -217,6 +336,7 @@ int main(int argc, char *argv[])
     glutDisplayFunc(display);                                   // register Display Function
     glutIdleFunc( display );                                    // register Idle Function
     glutKeyboardFunc( keyboard );                               // register Keyboard Handler
+<<<<<<< HEAD
     glutSpecialFunc(keyPress);                                  // register Keyboard zoomin/zoomout
     initialize();
 
@@ -229,6 +349,30 @@ int main(int argc, char *argv[])
         //o->Load((char*)filearray[1]);
         o->set_xyz((rand()%100)-50,(rand()%100)-50,(rand()%500)*-1);
         o->set_a(rand()%360);
+=======
+    glutSpecialFunc(keyPress);                                  // register Keyboard zoomin/zoomout 
+
+    initialize();
+    
+    sprintf(temp, "Object count: %d", loop);
+    printf("%s\n", temp);
+    strcat(title, temp);
+    glutSetWindowTitle(title);
+    
+    for(int i=0;i<loop;i++){
+        float x, y, z, a;
+        Model_OBJ *o = new Model_OBJ();
+
+        o->Load((char*)filearray[i%((sizeof(filearray)/sizeof(char*))-1)]);
+        
+        a =  rand()%360;
+        z = (rand()%500)*-1;
+        y = (rand()%100)-50;
+        x = ((rand()%100)-50) * z/50;
+
+        o->set_xyz(x, y, z);
+        o->set_a(a);
+>>>>>>> eric
 
         objs.push_back(o);
     }

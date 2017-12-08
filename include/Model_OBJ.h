@@ -1,13 +1,22 @@
 #ifndef MODEL_OBJ_H
 #define MODEL_OBJ_H
+<<<<<<< HEAD
+=======
+#if defined(__WIN32__)
+>>>>>>> eric
 #include <windows.h>
+#endif
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
 #include <string.h>
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#endif
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -25,12 +34,12 @@ using namespace std;
 
 typedef struct {
     int width;
-	int height;
-	char* title;
+    int height;
+    char* title;
 
-	float field_of_view_angle;
-	float z_near;
-	float z_far;
+    float field_of_view_angle;
+    float z_near;
+    float z_far;
 } glutWindow;
 
 
@@ -57,7 +66,11 @@ class Model_OBJ
         _y = y*1.0f;
         _z = z*1.0f;
     };
+<<<<<<< HEAD
     void set_a(float a){
+=======
+    void set_a(float a){ 
+>>>>>>> eric
         if(a > 360) a-= 360;
         _a = a*1.0f;
     };
