@@ -10,19 +10,22 @@ std::vector<Model_OBJ*> objs;
 Model_OBJ obj;
 float g_rotation;
 glutWindow win;
+int lookAtZ = 50; 
+
 
 int frame=0,__time,timebase=0;
 
 const char* filearray[] = {
 #if 0
-    "./obj/cube.obj",   
-    "./obj/teddy.obj", 
-    "./obj/bunny.obj",  
     "./obj/two-sided.obj",
     "./obj/venusm.obj",  
+    "./obj/bunny.obj",  
+    "./obj/cube.obj",   
+    "./obj/teddy.obj", 
 #endif
     "./obj/suzanne.obj",
-    "./obj/cow.obj"  
+    "./obj/cow.obj",
+    0  
 };
 bool finish_without_update = false;
 
@@ -86,7 +89,7 @@ void display()
     //第一個座標是攝影機的位置座標
     //第二個座標是攝影機所要拍攝的物體位置座標,只是要確定拍攝方向
     //第三個座標是攝影機正上方的向量
-    gluLookAt( 20,0,50, 20,0,0, 0,1,0);
+    gluLookAt( 20,0,lookAtZ, 20,0,0, 0,1,0);
     for(int i=0;i<objs.size();i++)
     {
         glPushMatrix();
@@ -164,13 +167,41 @@ void keyboard ( unsigned char key, int x, int y )
   }
 }
 
+void keyPress(int key,int x,int y) 
+{ 
+ 
+    switch(key){ 
+        case GLUT_KEY_UP : 
+                lookAtZ += 2; 
+                glutPostRedisplay(); 
+                printf("ZOOM OUT lookAtZ : %d \n",lookAtZ); 
+            break; 
+        case GLUT_KEY_DOWN : 
+            if(lookAtZ > 1) 
+            { 
+                lookAtZ -= 2; 
+                glutPostRedisplay(); 
+                printf("ZOOM IN lookAtZ : %d \n",lookAtZ); 
+            }else 
+            { 
+                printf("ZOOM INT already equal to zero : %d \n",lookAtZ); 
+            } 
+            break; 
+        default: 
+            break; 
+    } 
+}
+
 int main(int argc, char *argv[])
 {
     int loop = 100;
+    char temp[256];
+    char title[256] = "cs569 project1 demo [1056102 1056105]   ";
+    
     // set window values
     win.width = 1280;
     win.height = 800;
-    win.title = (char*)"cs569 project1 demo";
+    win.title = 0;
     win.field_of_view_angle = 45;
     win.z_near = 1.0f;
     win.z_far = 1000.0f;
@@ -187,17 +218,22 @@ int main(int argc, char *argv[])
     glutDisplayFunc(display);                                   // register Display Function
     glutIdleFunc( display );                                    // register Idle Function
     glutKeyboardFunc( keyboard );                               // register Keyboard Handler
-    initialize();
+    glutSpecialFunc(keyPress);                                  // register Keyboard zoomin/zoomout 
 
-    printf("Test with count: %d\n", loop);
+    initialize();
+    
+    sprintf(temp, "Object count: %d", loop);
+    printf("%s\n", temp);
+    strcat(title, temp);
+    glutSetWindowTitle(title);
     
     for(int i=0;i<loop;i++){
         float x, y, z, a;
         Model_OBJ *o = new Model_OBJ();
 
-        o->Load((char*)filearray[i%(sizeof(filearray)/sizeof(char*))]);
-
-        a = rand()%360;
+        o->Load((char*)filearray[i%((sizeof(filearray)/sizeof(char*))-1)]);
+        
+        a =  rand()%360;
         z = (rand()%500)*-1;
         y = (rand()%100)-50;
         x = ((rand()%100)-50) * z/50;
