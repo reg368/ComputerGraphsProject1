@@ -318,11 +318,11 @@ namespace Simplify
 
 			// update mesh once in a while
 			//迴圈每跑5次 就 update mesh  這邊只會跑 0 , 1 就中斷迴圈了 , 所以會進去 update_mesh 的時機只有 iteration 是 0的時候
-			printf("simplify_mesh iteration : %d \n",iteration);
+			//printf("simplify_mesh iteration : %d \n",iteration);
 			if(iteration%5==0)
 			{
 			    //當iteration = 0 的時候進來
-			    printf("simplify_mesh iteration mod 5 == 0: %d \n",iteration);
+			    //printf("simplify_mesh iteration mod 5 == 0: %d \n",iteration);
 				update_mesh(iteration);
 			}
 
@@ -339,7 +339,7 @@ namespace Simplify
 
 			// target number of triangles reached ? Then break
 			if ((verbose) && (iteration%5==0)) {
-				printf("iteration %d - triangles %d threshold %g\n",iteration,triangle_count-deleted_triangles, threshold);
+				//printf("iteration %d - triangles %d threshold %g\n",iteration,triangle_count-deleted_triangles, threshold);
 			}
 
 			// remove vertices & mark deleted triangles
@@ -424,7 +424,7 @@ namespace Simplify
 			//
 			double threshold = DBL_EPSILON; //1.0E-3 EPS;
 			if (verbose) {
-				printf("lossless iteration %d\n", iteration);
+				//printf("lossless iteration %d\n", iteration);
 			}
 
 			// remove vertices & mark deleted triangles
@@ -555,11 +555,11 @@ namespace Simplify
 			loopi(0,triangles.size())
 			if(!triangles[i].deleted)
 			{
-			    printf("triangles %d .deleted = %d \n",i,triangles[i].deleted);
+			    //printf("triangles %d .deleted = %d \n",i,triangles[i].deleted);
 				triangles[dst++]=triangles[i];
-                printf("triangles %d = triangles %d \n",dst++,i);
+                //printf("triangles %d = triangles %d \n",dst++,i);
 			}
-			 printf("triangles.resize : %d \n",dst);
+			 //printf("triangles.resize : %d \n",dst);
 			triangles.resize(dst);
 		}
 		//
@@ -593,7 +593,7 @@ namespace Simplify
 					vertices[t.v[j]].q+SymetricMatrix(n.x,n.y,n.z,-n.dot(p[0]));
 			}
 
-			printf("t.v[j] index : %d /n",index);
+			//printf("t.v[j] index : %d /n",index);
 
 			loopi(0,triangles.size())
 			{

@@ -15,6 +15,9 @@ Model_OBJ obj;
 float g_rotation;
 glutWindow win;
 int lookAtZ = 50;
+int lookAtX = 20;
+int mode = 0;
+
 
 
 int frame=0,__time,timebase=0;
@@ -23,16 +26,25 @@ const char* filearray[] = {
 #if 0
     "./obj/two-sided.obj",
     "./obj/venusm.obj",
-    "./obj/bunny.obj",
     "./obj/cube.obj",
-    "./obj/teddy.obj",
+    "./obj/suzanne.obj",
+    "./obj/bunny.obj",
+    "./obj/cow.obj",
 #endif
+    "\\obj\\teddy.obj",
     "\\obj\\b-8000.obj",
-    "\\obj\\suzanne.obj",
-    "\\obj\\cow.obj",
     0
 };
+
+string ExePath(int i ) {
+    char buffer[MAX_PATH];
+    GetModuleFileName( NULL, buffer, MAX_PATH );
+    string::size_type pos = string( buffer ).find_last_of( "\\/" );
+    return string( buffer ).substr( 0, pos).append(filearray[i]);
+}
+
 bool finish_without_update = false;
+bool need_rotate = true;
 
 float g_fps( void (*func)(void), int n_frame )
 {
@@ -80,7 +92,8 @@ void show_fps()
     }
 
     glPushMatrix();
-    renderBitmapString(-12,18,0,(void *)GLUT_BITMAP_HELVETICA_18, s);
+    //renderBitmapString(-12,18,0,(void *)GLUT_BITMAP_HELVETICA_18, s);
+    renderBitmapString(20,5,0,(void *)GLUT_BITMAP_HELVETICA_18, s);
     glPopMatrix();
 }
 
@@ -94,7 +107,7 @@ void display()
     //第一個座標是攝影機的位置座標
     //第二個座標是攝影機所要拍攝的物體位置座標,只是要確定拍攝方向
     //第三個座標是攝影機正上方的向量
-    gluLookAt( 20,0,lookAtZ, 20,0,0, 0,1,0);
+    gluLookAt( lookAtX,0,lookAtZ, lookAtX,0,0, 0,1,0);
     for(int i=0;i<objs.size();i++)
     {
         glPushMatrix();
@@ -104,9 +117,10 @@ void display()
             //angle 正負影響選轉方向 大小影響旋轉速度
             //x,y,z 正負影響旋轉方向 , 大小影響旋轉位置
             glRotatef(objs[i]->get_a(),(i%3)==0,(i%3)==1,(i%3)==2);
-            //glRotatef(90,0,1,0);
-            objs[i]->set_a((objs[i]->get_a()+rand()%10));
-            //obj.Draw(i);
+
+            if(need_rotate){
+                objs[i]->set_a((objs[i]->get_a()+rand()%10));
+            }
             objs[i]->Draw();
         glPopMatrix();
     }
@@ -136,6 +150,8 @@ void initialize ()
     glDepthFunc( GL_LEQUAL );
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     GLfloat amb_light[] = { 0.1, 0.1, 0.1, 1.0 };
     GLfloat diffuse[] = { 0.6, 0.6, 0.6, 1 };
     GLfloat specular[] = { 0.7, 0.7, 0.3, 1 };
@@ -159,7 +175,10 @@ void keyboard ( unsigned char key, int x, int y )
     case KEY_ESCAPE:
       exit ( 0 );
       break;
-
+    case 'S':
+    case 's':
+        need_rotate ^= 1;
+        break;
     case 'F':
     case 'f':
      finish_without_update = true;
@@ -176,23 +195,31 @@ void keyPress(int key,int x,int y)
 {
 
     switch(key){
-        case 27 :
-            exit(0);
+        case GLUT_KEY_LEFT :
+                lookAtX -= 2;
+                glutPostRedisplay();
+                //printf("ZOOM OUT lookAtX : %d \n",lookAtX);
+            break;
+        case GLUT_KEY_RIGHT :
+                lookAtX += 2;
+                glutPostRedisplay();
+                //printf("ZOOM IN lookAtX : %d \n",lookAtX);
             break;
         case GLUT_KEY_UP :
-                lookAtZ += 1;
+                lookAtZ += 2;
                 glutPostRedisplay();
-                printf("ZOOM OUT lookAtZ : %d \n",lookAtZ);
+                //printf("ZOOM OUT lookAtZ : %d \n",lookAtZ);
             break;
         case GLUT_KEY_DOWN :
             if(lookAtZ > 1)
             {
-                lookAtZ -= 1;
+                lookAtZ -= 2;
                 glutPostRedisplay();
-                printf("ZOOM IN lookAtZ : %d \n",lookAtZ);
-            }else
+                //printf("ZOOM IN lookAtZ : %d \n",lookAtZ);
+            }
+            else
             {
-                printf("ZOOM INT already equal to zero : %d \n",lookAtZ);
+                //printf("ZOOM INT already equal to zero : %d \n",lookAtZ);
             }
             break;
         default:
@@ -200,45 +227,92 @@ void keyPress(int key,int x,int y)
     }
 }
 
-string ExePath(int i ) {
-    char buffer[MAX_PATH];
-    GetModuleFileName( NULL, buffer, MAX_PATH );
-    string::size_type pos = string( buffer ).find_last_of( "\\/" );
-    return string( buffer ).substr( 0, pos).append(filearray[i]);
+void test_mode0(int loop)
+{
+    char temp[256];
+    char title[256] = "cs569 project1 demo [1056102 1056105]   ";
+
+
+    sprintf(temp, "Object count: %d, Mode 0", loop);
+    printf("%s\n", temp);
+    strcat(title, temp);
+    glutSetWindowTitle(title);
+
+
+    for(int i=0;i<loop;i++){
+        float x, y, z, a;
+        Model_OBJ *o = new Model_OBJ();
+
+        o->Load((char*)ExePath(i%((sizeof(filearray)/sizeof(char*))-1)).c_str());
+
+        a =  rand()%360;
+        z = (rand()%500)*-1;
+        y = (rand()%100)-50;
+        x = ((rand()%100)-50) * z/50;
+
+        o->set_xyz(x, y, z);
+        o->set_a(a);
+
+        objs.push_back(o);
+    }
+
+    glutMainLoop();                                             // run GLUT mainloop
+
+    for(int i=0;i<objs.size();i++)
+    {
+        objs[i]->Release();
+    }
+    objs.clear();
 }
 
-char* appendCharToCharArray(char* array, char a)
+void test_mode1()
 {
-    size_t len = strlen(array);
+    float x, y, z, a;
+    char temp[256];
+    char title[256] = "cs569 project1 demo [1056102 1056105] Mode 1  ";
 
-    char* ret = new char[len+2];
 
-    strcpy(ret, array);
-    ret[len] = a;
-    ret[len+1] = '\0';
+    printf("%s\n", title);
+    glutSetWindowTitle(title);
 
-    return ret;
+    x = y = 0;
+    z = 30;
+
+    for(int i=0;i<10;i++){
+        Model_OBJ *o = new Model_OBJ();
+
+        a = rand()%360;
+        z -= 5.0;
+        y += 0;
+        x += 5.0;
+        o->SimplifyLoad((char*)ExePath(1).c_str(), (z + 30) / 1000);
+
+        o->set_xyz(x, y, z);
+        o->set_a(a);
+
+        objs.push_back(o);
+    }
+
+    glutMainLoop();                                             // run GLUT mainloop
+
+    for(int i=0;i<objs.size();i++)
+    {
+        objs[i]->Release();
+    }
+    objs.clear();
 }
 
 int main(int argc, char *argv[])
 {
-
-    TCHAR full_path[MAX_PATH];
-
-    printf("my directory is : %s  \n",ExePath(0).c_str());
-
-    int loop = 100;
     int seed = 100;
-    char temp[256];
-    char title[256] = "cs569 project1 demo [1056102 1056105]   ";
-
+    int loop = 100;
     // set window values
     win.width = 1280;
     win.height = 800;
     win.title = 0;
     win.field_of_view_angle = 45;
     win.z_near = 1.0f;
-    win.z_far = 1000.0f;
+    win.z_far = 2000.0f;
 
 
     if(argc > 1){
@@ -249,6 +323,7 @@ int main(int argc, char *argv[])
             exit(0);
         }else{
             loop = strtol(argv[1], NULL, 10);
+            if(loop == 0) mode = 1;
         }
     }
     if(argc > 2){
@@ -267,33 +342,10 @@ int main(int argc, char *argv[])
     glutIdleFunc( display );                                    // register Idle Function
     glutKeyboardFunc( keyboard );                               // register Keyboard Handler
     glutSpecialFunc(keyPress);                                  // register Keyboard zoomin/zoomout
-
     initialize();
 
-    sprintf(temp, "Object count: %d", loop);
-    printf("%s\n", temp);
-    strcat(title, temp);
-    glutSetWindowTitle(title);
-
-    for(int i=0;i<loop;i++){
-
-        float x, y, z, a;
-        Model_OBJ *o = new Model_OBJ();
-
-        o->Load( (char*)ExePath(i%((sizeof(filearray)/sizeof(char*))-1)).c_str());
-
-        a =  rand()%360;
-        z = (rand()%500)*-1;
-        y = (rand()%100)-50;
-        x = ((rand()%100)-50) * z/50;
-
-        o->set_xyz(x, y, z);
-        o->set_a(a);
-
-        objs.push_back(o);
-    }
-
-    glutMainLoop();                                             // run GLUT mainloop
+    if(mode == 0) test_mode0(loop);
+    else          test_mode1();
 
     return 0;
 }
