@@ -1,7 +1,10 @@
 #define POINTS_PER_VERTEX 3
 #define TOTAL_FLOATS_IN_TRIANGLE 9
 using namespace std;
+
+#include <time.h> 
 #include "Model_OBJ.h"
+#include "Simplify.h"
 
 
 Model_OBJ::Model_OBJ()
@@ -70,7 +73,7 @@ int Model_OBJ::Load(char* filename)
                     &vertexBuffer[TotalConnectedPoints],
                     &vertexBuffer[TotalConnectedPoints+1],
                     &vertexBuffer[TotalConnectedPoints+2]);
-
+                
                 TotalConnectedPoints += POINTS_PER_VERTEX;                  // Add 3 to the total connected points
             }
             if (line.c_str()[0] == 'f')                                     // The first character is an 'f': on this line is a point stored
@@ -117,12 +120,13 @@ int Model_OBJ::Load(char* filename)
                     normals[normal_index + tCounter ] = norm[0];
                     normals[normal_index + tCounter +1] = norm[1];
                     normals[normal_index + tCounter +2] = norm[2];
+
                     tCounter += POINTS_PER_VERTEX;
                 }
 
                 triangle_index += TOTAL_FLOATS_IN_TRIANGLE;
                 normal_index += TOTAL_FLOATS_IN_TRIANGLE;
-                TotalConnectedTriangles += TOTAL_FLOATS_IN_TRIANGLE;
+                TotalConnectedTriangles += 3;//TOTAL_FLOATS_IN_TRIANGLE;
             }
         }
         objFile.close();                                                        // Close OBJ file
@@ -150,4 +154,69 @@ void Model_OBJ::Draw()
     glDrawArrays(GL_TRIANGLES, 0, TotalConnectedTriangles);     // Draw the triangles
     glDisableClientState(GL_VERTEX_ARRAY);                      // Disable vertex arrays
     glDisableClientState(GL_NORMAL_ARRAY);                      // Disable normal arrays
+}
+
+int Model_OBJ::SimplifyLoad(char *filename, float ratio)
+{
+    float *ptr, *ptr1;
+    int target_count, t_cnt = 0;
+    Simplify::load_obj(filename);
+    target_count = round((float)Simplify::triangles.size() * ratio);
+        
+    clock_t start = clock();
+    printf("Input: %zu vertices, %zu triangles (target %d), ratio: %f --> ", Simplify::vertices.size(), Simplify::triangles.size(), target_count, ratio);
+    int startSize = Simplify::triangles.size();
+    
+    Simplify::simplify_mesh(target_count, 7, true);
+    if ( Simplify::triangles.size() >= startSize) {
+        printf("Unable to reduce mesh.\n");
+        //return EXIT_FAILURE;
+    }
+    
+    printf("Output: %zu vertices, %zu triangles (%f reduction; %.4f sec)\n",Simplify::vertices.size(), Simplify::triangles.size()
+        , (float)Simplify::triangles.size()/ (float) startSize  , ((float)(clock()-start))/CLOCKS_PER_SEC );
+            
+    vertexBuffer =      (float*) malloc((Simplify::vertices.size() +10) * sizeof(float) * POINTS_PER_VERTEX);              // Allocate memory for the verteces
+    Faces_Triangles =   (float*) malloc((Simplify::triangles.size()+10) * sizeof(float) * TOTAL_FLOATS_IN_TRIANGLE);          // Allocate memory for the triangles
+    normals  =          (float*) malloc((Simplify::triangles.size()+10) * sizeof(float) * TOTAL_FLOATS_IN_TRIANGLE);                 // Allocate memory for the normals
+
+    ptr = vertexBuffer;
+    for(int i=0;i<Simplify::vertices.size();i++)
+    {
+        //fprintf(file, "v %g %g %g\n", vertices[i].p.x,vertices[i].p.y,vertices[i].p.z); //more compact: remove trailing zeros
+        *ptr++ = Simplify::vertices[i].p.x;
+        *ptr++ = Simplify::vertices[i].p.y;
+        *ptr++ = Simplify::vertices[i].p.z;
+    }
+    
+    ptr = Faces_Triangles;
+    ptr1 = normals;
+    for(int i=0;i<Simplify::triangles.size();i++)
+    {
+        if(!Simplify::triangles[i].deleted)
+        {
+            //fprintf(file, "f %d %d %d\n", triangles[i].v[0]+1, triangles[i].v[1]+1, triangles[i].v[2]+1);
+            
+            for (int j = 0; j < POINTS_PER_VERTEX; j++)
+            {
+                *ptr++ =  Simplify::vertices[Simplify::triangles[i].v[j]].p.x;
+                *ptr++ =  Simplify::vertices[Simplify::triangles[i].v[j]].p.y;
+                *ptr++ =  Simplify::vertices[Simplify::triangles[i].v[j]].p.z;
+            }
+
+            float *norm = this->calculateNormal(ptr-9, ptr-6, ptr-3);
+            for (int j = 0; j < POINTS_PER_VERTEX; j++)
+            {
+                *ptr1++ = norm[0];
+                *ptr1++ = norm[1];
+                *ptr1++ = norm[2];
+            }
+            
+            t_cnt++;
+        }
+    }
+    
+    TotalConnectedTriangles = t_cnt * 3;//  * TOTAL_FLOATS_IN_TRIANGLE;
+    //printf("TotalConnectedTriangles: %d, %d\n", Simplify::triangles.size(), TotalConnectedTriangles);
+
 }

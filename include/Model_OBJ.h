@@ -57,6 +57,10 @@ class Model_OBJ
     int Load(char *filename);       // Loads the model
     void Draw();                    // Draws the model on the screen
     void Release();                 // Release the model
+    void Convert();
+    int SimplifyLoad(char *filename, float ratio);       // Loads the model fom Simplify Module, ratio 0.0 ~ 1.0
+
+    
     void set_xyz(float x, float y, float z){
         _x = x*1.0f;
         _y = y*1.0f;
