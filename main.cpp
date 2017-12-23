@@ -14,8 +14,8 @@ std::vector<Model_OBJ*> objs;
 Model_OBJ obj;
 float g_rotation;
 glutWindow win;
-int lookAtZ = 50;
-int lookAtX = 20;
+float lookAtZ = 50;
+float lookAtX = 20;
 int mode = 0;
 
 
@@ -28,8 +28,8 @@ const char* filearray[] = {
     "./obj/venusm.obj",
     "./obj/cube.obj",
     "./obj/suzanne.obj",
-    "./obj/bunny.obj",
     "./obj/cow.obj",
+    "./obj/bunny.obj",
 #endif
     "\\obj\\teddy.obj",
     "\\obj\\b-8000.obj",
@@ -45,6 +45,7 @@ string ExePath(int i ) {
 
 bool finish_without_update = false;
 bool need_rotate = true;
+bool only_mesh = false;
 
 float g_fps( void (*func)(void), int n_frame )
 {
@@ -97,6 +98,16 @@ void show_fps()
     glPopMatrix();
 }
 
+void show_obj_info(int i)
+{
+    glPushMatrix();
+    // show objects information
+    renderBitmapString(objs[i]->get_x()-1,
+                       objs[i]->get_y()+2 * (i&1 ? 1:-1) ,
+                       objs[i]->get_z(),(void *)GLUT_BITMAP_HELVETICA_10, (char*)objs[i]->info.c_str());
+    glPopMatrix();
+}
+
 void display()
 {
 
@@ -122,7 +133,10 @@ void display()
                 objs[i]->set_a((objs[i]->get_a()+rand()%10));
             }
             objs[i]->Draw();
+
         glPopMatrix();
+
+        show_obj_info(i);
     }
     show_fps();
 
@@ -150,7 +164,7 @@ void initialize ()
     glDepthFunc( GL_LEQUAL );
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     GLfloat amb_light[] = { 0.1, 0.1, 0.1, 1.0 };
     GLfloat diffuse[] = { 0.6, 0.6, 0.6, 1 };
@@ -171,21 +185,48 @@ void initialize ()
 
 void keyboard ( unsigned char key, int x, int y )
 {
+  float offset = 0.1;
+
   switch ( key ) {
     case KEY_ESCAPE:
       exit ( 0 );
       break;
-    case 'S':
-    case 's':
+    case 'M':
+    case 'm':
+        only_mesh ^= 1;
+        if(only_mesh)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        else
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        break;
+
+    case 'R':
+    case 'r':
         need_rotate ^= 1;
         break;
     case 'F':
     case 'f':
-     finish_without_update = true;
-     printf( "%f fps\n", g_fps( display, 100 ) );
-     finish_without_update = false;
+        finish_without_update = true;
+        printf( "%f fps\n", g_fps( display, 100 ) );
+        finish_without_update = false;
      break;
+    case '{':
+        offset = 2;
+    case '[':
+        lookAtZ += offset;
+        glutPostRedisplay();
+        //printf("ZOOM OUT lookAtZ : %d \n",lookAtZ);
+        break;
 
+    case '}':
+        offset = 2;
+    case ']' :
+        lookAtZ -= offset;
+        glutPostRedisplay();
+        //printf("ZOOM IN lookAtZ : %d \n",lookAtZ);
+
+        break;
     default:
       break;
   }
@@ -193,7 +234,6 @@ void keyboard ( unsigned char key, int x, int y )
 
 void keyPress(int key,int x,int y)
 {
-
     switch(key){
         case GLUT_KEY_LEFT :
                 lookAtX -= 2;
@@ -205,22 +245,16 @@ void keyPress(int key,int x,int y)
                 glutPostRedisplay();
                 //printf("ZOOM IN lookAtX : %d \n",lookAtX);
             break;
+
         case GLUT_KEY_UP :
-                lookAtZ += 2;
+                lookAtZ += 0.1;
                 glutPostRedisplay();
                 //printf("ZOOM OUT lookAtZ : %d \n",lookAtZ);
             break;
         case GLUT_KEY_DOWN :
-            if(lookAtZ > 1)
-            {
-                lookAtZ -= 2;
+                lookAtZ -= 0.1;
                 glutPostRedisplay();
                 //printf("ZOOM IN lookAtZ : %d \n",lookAtZ);
-            }
-            else
-            {
-                //printf("ZOOM INT already equal to zero : %d \n",lookAtZ);
-            }
             break;
         default:
             break;
@@ -265,6 +299,8 @@ void test_mode0(int loop)
     objs.clear();
 }
 
+#define MODE1_TEST_LOOP     10
+#define MODE1_TEST_STEP     5.0
 void test_mode1()
 {
     float x, y, z, a;
@@ -277,14 +313,16 @@ void test_mode1()
 
     x = y = 0;
     z = 30;
-
-    for(int i=0;i<10;i++){
+    for(int i=0;i<MODE1_TEST_LOOP;i++){
+        float ratio;
         Model_OBJ *o = new Model_OBJ();
 
         a = rand()%360;
-        z -= 5.0;
+        z -= MODE1_TEST_STEP;
         y += 0;
         x += 5.0;
+        //ratio = (z + 30) / 1000;
+        ratio = (100 - (i * 10 + 9.5)) / 100;
         o->SimplifyLoad((char*)ExePath(1).c_str(), (z + 30) / 1000);
 
         o->set_xyz(x, y, z);
@@ -311,7 +349,7 @@ int main(int argc, char *argv[])
     win.height = 800;
     win.title = 0;
     win.field_of_view_angle = 45;
-    win.z_near = 1.0f;
+    win.z_near = 0.1f;
     win.z_far = 2000.0f;
 
 

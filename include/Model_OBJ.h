@@ -53,6 +53,7 @@ class Model_OBJ
     float _a;
 
   public:
+    string info;
     Model_OBJ();
     float* calculateNormal(float* coord1,float* coord2,float* coord3 );
     int Load(char *filename);       // Loads the model
