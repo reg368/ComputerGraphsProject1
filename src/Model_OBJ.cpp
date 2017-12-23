@@ -158,6 +158,7 @@ void Model_OBJ::Draw()
 
 int Model_OBJ::SimplifyLoad(char *filename, float ratio)
 {
+    char temp[256];
     float *ptr, *ptr1;
     int target_count, t_cnt = 0;
     Simplify::load_obj(filename);
@@ -175,7 +176,11 @@ int Model_OBJ::SimplifyLoad(char *filename, float ratio)
     
     printf("Output: %zu vertices, %zu triangles (%f reduction; %.4f sec)\n",Simplify::vertices.size(), Simplify::triangles.size()
         , (float)Simplify::triangles.size()/ (float) startSize  , ((float)(clock()-start))/CLOCKS_PER_SEC );
+    
             
+    sprintf(temp, "R: %2.2f%%, T: %d", ratio*100, Simplify::triangles.size());
+    info = temp;
+     
     vertexBuffer =      (float*) malloc((Simplify::vertices.size() +10) * sizeof(float) * POINTS_PER_VERTEX);              // Allocate memory for the verteces
     Faces_Triangles =   (float*) malloc((Simplify::triangles.size()+10) * sizeof(float) * TOTAL_FLOATS_IN_TRIANGLE);          // Allocate memory for the triangles
     normals  =          (float*) malloc((Simplify::triangles.size()+10) * sizeof(float) * TOTAL_FLOATS_IN_TRIANGLE);                 // Allocate memory for the normals
