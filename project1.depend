@@ -75,7 +75,7 @@
 	<windows.h>
 	<iostream>
 
-1512703030 c:\users\user\desktop\yzucs\1061computer_graphics\opengl\project1\include\model_obj.h
+1514124002 c:\users\user\desktop\yzucs\1061computer_graphics\opengl\project1\include\model_obj.h
 	<windows.h>
 	<iostream>
 	<fstream>
@@ -92,6 +92,16 @@
 	<vector>
 	<cmath>
 
-1512700050 source:c:\users\user\desktop\yzucs\1061computer_graphics\opengl\project1\src\model_obj.cpp
+1514124002 source:c:\users\user\desktop\yzucs\1061computer_graphics\opengl\project1\src\model_obj.cpp
+	<time.h>
 	"Model_OBJ.h"
+	"Simplify.h"
+
+1513996053 c:\users\user\desktop\yzucs\1061computer_graphics\opengl\project1\include\simplify.h
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<vector>
+	<math.h>
+	<float.h>
 

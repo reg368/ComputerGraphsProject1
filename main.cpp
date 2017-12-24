@@ -18,8 +18,6 @@ float lookAtZ = 50;
 float lookAtX = 20;
 int mode = 0;
 
-
-
 int frame=0,__time,timebase=0;
 
 const char* filearray[] = {
@@ -28,11 +26,9 @@ const char* filearray[] = {
     "./obj/venusm.obj",
     "./obj/cube.obj",
     "./obj/suzanne.obj",
-    "./obj/cow.obj",
-    "./obj/bunny.obj",
 #endif
-    "\\obj\\teddy.obj",
-    "\\obj\\b-8000.obj",
+    "\\obj\\b-4000.obj",
+    "\\obj\\b-4000.obj",
     0
 };
 
@@ -103,7 +99,7 @@ void show_obj_info(int i)
     glPushMatrix();
     // show objects information
     renderBitmapString(objs[i]->get_x()-1,
-                       objs[i]->get_y()+2 * (i&1 ? 1:-1) ,
+                       objs[i]->get_y()+1 * ((i&1 && mode==1) ? -1:1) ,
                        objs[i]->get_z(),(void *)GLUT_BITMAP_HELVETICA_10, (char*)objs[i]->info.c_str());
     glPopMatrix();
 }
@@ -112,13 +108,14 @@ void display()
 {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     //視線的座標及方向
     //------gluLookAt( x1 , y1 , z1 , x2 , y2 , z2 , x3 , y3 , z3 ) 有9個參數，代表3個座標點,其實是兩個座標點和一個向量
     //第一個座標是攝影機的位置座標
     //第二個座標是攝影機所要拍攝的物體位置座標,只是要確定拍攝方向
     //第三個座標是攝影機正上方的向量
-    gluLookAt( lookAtX,0,lookAtZ, lookAtX,0,0, 0,1,0);
+    gluLookAt( lookAtX,0,lookAtZ, lookAtX,0,-1000, 0,1,0);
     for(int i=0;i<objs.size();i++)
     {
         glPushMatrix();
@@ -139,11 +136,7 @@ void display()
         show_obj_info(i);
     }
     show_fps();
-
-    if( finish_without_update )
-        glFinish();
-    else
-        glutSwapBuffers();
+    glutSwapBuffers();
 }
 
 
@@ -182,6 +175,20 @@ void initialize ()
     glEnable(GL_LIGHT0);
 }
 
+void update_mode2_obj()
+{
+    float ratio;
+    if(lookAtZ<= 50 || lookAtZ >= 100) return;
+
+    ratio = (100 - lookAtZ) / 50;
+    if(ratio < 0.005) return;
+
+    objs[0]->Release();
+
+    //objs[0]->SimplifyLoad((char*)filearray[1], ratio);
+    objs[0]->SimplifyLoad((char*)ExePath(1).c_str(), ratio);
+
+}
 
 void keyboard ( unsigned char key, int x, int y )
 {
@@ -205,26 +212,23 @@ void keyboard ( unsigned char key, int x, int y )
     case 'r':
         need_rotate ^= 1;
         break;
-    case 'F':
-    case 'f':
-        finish_without_update = true;
-        printf( "%f fps\n", g_fps( display, 100 ) );
-        finish_without_update = false;
-     break;
     case '{':
         offset = 2;
     case '[':
+        if(mode == 2 && lookAtZ >= 100) break;
         lookAtZ += offset;
+        if(mode == 2) update_mode2_obj();
         glutPostRedisplay();
-        //printf("ZOOM OUT lookAtZ : %d \n",lookAtZ);
+        //printf("ZOOM OUT lookAtZ : %f \n",lookAtZ);
         break;
 
     case '}':
         offset = 2;
     case ']' :
         lookAtZ -= offset;
+        if(mode == 2) update_mode2_obj();
         glutPostRedisplay();
-        //printf("ZOOM IN lookAtZ : %d \n",lookAtZ);
+        //printf("ZOOM IN lookAtZ : %f \n",lookAtZ);
 
         break;
     default:
@@ -261,6 +265,28 @@ void keyPress(int key,int x,int y)
     }
 }
 
+#define MAX_TEST_DIST       250.0
+float cal_ratio_from_dist(float dist)
+{
+    float ratio;
+
+    if(mode == 1) dist *= 5;
+
+    if(dist<1.0)
+        ratio = 1;
+    else if(dist>=MAX_TEST_DIST)
+        ratio = 0.005;
+    else{
+        ratio = (MAX_TEST_DIST - dist) / MAX_TEST_DIST;
+    }
+
+
+    printf("test dist: %3.4f,  ratio: %1.4f\n", dist, ratio);
+
+    return ratio;
+
+}
+
 void test_mode0(int loop)
 {
     char temp[256];
@@ -274,19 +300,25 @@ void test_mode0(int loop)
 
 
     for(int i=0;i<loop;i++){
-        float x, y, z, a;
+        float x, y, z, a, ratio;
         Model_OBJ *o = new Model_OBJ();
-
-        o->Load((char*)ExePath(i%((sizeof(filearray)/sizeof(char*))-1)).c_str());
-
-        a =  rand()%360;
-        z = (rand()%500)*-1;
-        y = (rand()%100)-50;
-        x = ((rand()%100)-50) * z/50;
-
+        //o->Load((char*)filearray[i%((sizeof(filearray)/sizeof(char*))-1)]);
+        if(i < 5){
+            a =  rand()%36;
+            z = (rand()%10)*-1 + 50;
+            y = (rand()%10)-50;
+            x = ((rand()%100)-50) * z/50;
+        }else{
+            a =  rand()%360;
+            z = (rand()%300)*-1 + 50;
+            y = (rand()%100)-50;
+            x = ((rand()%100)-50) * z/50;
+        }
+        ratio = cal_ratio_from_dist(30 - z);
+        o->SimplifyLoad((char*)ExePath(i%((sizeof(filearray)/sizeof(char*))-1)).c_str(), ratio);
+        //o->SimplifyLoad((char*)filearray[i%((sizeof(filearray)/sizeof(char*))-1)], ratio);
         o->set_xyz(x, y, z);
         o->set_a(a);
-
         objs.push_back(o);
     }
 
@@ -322,9 +354,10 @@ void test_mode1()
         y += 0;
         x += 5.0;
         //ratio = (z + 30) / 1000;
-        ratio = (100 - (i * 10 + 9.5)) / 100;
-        o->SimplifyLoad((char*)ExePath(1).c_str(), (z + 30) / 1000);
-
+        //ratio = (100 - (i * 10 + 9.5)) / 100;
+        ratio = cal_ratio_from_dist(30 - z);
+        o->SimplifyLoad((char*)ExePath(1).c_str(), ratio);
+        //o->SimplifyLoad((char*)filearray[1], ratio);
         o->set_xyz(x, y, z);
         o->set_a(a);
 
@@ -340,32 +373,66 @@ void test_mode1()
     objs.clear();
 }
 
+
+void test_mode2()
+{
+    float x, y, z, a;
+
+    Model_OBJ *o = new Model_OBJ();
+
+    a = rand()%360;
+    z = 45;
+    y = 0;
+    x = 20.5;
+
+    //o->SimplifyLoad((char*)filearray[1], 1);
+    o->SimplifyLoad((char*)(char*)ExePath(1).c_str(), 1);
+
+    o->set_xyz(x, y, z);
+    o->set_a(a);
+
+    objs.push_back(o);
+
+    glutMainLoop();                                             // run GLUT mainloop
+
+    objs[0]->Release();
+
+    objs.clear();
+}
+
 int main(int argc, char *argv[])
 {
     int seed = 100;
-    int loop = 100;
+    int loop = 50;
     // set window values
     win.width = 1280;
     win.height = 800;
     win.title = 0;
     win.field_of_view_angle = 45;
-    win.z_near = 0.1f;
+    win.z_near = 1.0f;
     win.z_far = 2000.0f;
 
 
     if(argc > 1){
         if(argv[1][0] == '-' && argv[1][1] == 'h'){
-            printf("Usage: %s <obj count> <rand seed>\n", argv[0]);
-            printf("      <obj count>: default is 100\n");
+            printf("Usage: %s <mode> <obj count> <rand seed>\n", argv[0]);
+            printf("      <mode>     : default is 0\n");
+            printf("                   mode 0 for random mode\n");
+            printf("                   mode 1 for fixed objects mode\n");
+            printf("                   mode 2 for run time dynamic simpllify mode\n");
+            printf("      <obj count>: default is 50\n");
             printf("      <rand seed>: default by time\n");
             exit(0);
         }else{
-            loop = strtol(argv[1], NULL, 10);
-            if(loop == 0) mode = 1;
+            mode = strtol(argv[1], NULL, 10);
         }
     }
     if(argc > 2){
-        seed = strtol(argv[2], NULL, 10);
+        loop = strtol(argv[2], NULL, 10);
+        if(loop == 0) mode = 1;
+    }
+    if(argc > 3){
+        seed = strtol(argv[3], NULL, 10);
         srand (seed);
     }else{
         srand (time(NULL));
@@ -380,10 +447,12 @@ int main(int argc, char *argv[])
     glutIdleFunc( display );                                    // register Idle Function
     glutKeyboardFunc( keyboard );                               // register Keyboard Handler
     glutSpecialFunc(keyPress);                                  // register Keyboard zoomin/zoomout
+
     initialize();
 
-    if(mode == 0) test_mode0(loop);
-    else          test_mode1();
+    if(mode == 1)       test_mode1();
+    else if(mode == 2)  test_mode2();
+    else                test_mode0(loop);
 
     return 0;
 }
