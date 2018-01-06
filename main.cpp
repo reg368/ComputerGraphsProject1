@@ -13,6 +13,7 @@ glutWindow win;
 float lookAtZ = 50; 
 float lookAtX = 20; 
 int mode = 0;
+int force_ratio_100 = 0;
 
 
 int frame=0,__time,timebase=0;
@@ -310,7 +311,10 @@ void test_mode0(int loop)
             x = ((rand()%100)-50) * z/50;
         }
         ratio = cal_ratio_from_dist(30 - z);
-        o->SimplifyLoad((char*)filearray[i%((sizeof(filearray)/sizeof(char*))-1)], ratio);
+        if(force_ratio_100)
+            o->Load((char*)filearray[i%((sizeof(filearray)/sizeof(char*))-1)]);
+        else    
+            o->SimplifyLoad((char*)filearray[i%((sizeof(filearray)/sizeof(char*))-1)], ratio);
 
         o->set_xyz(x, y, z);
         o->set_a(a);
@@ -410,6 +414,9 @@ int main(int argc, char *argv[])
     win.z_near = 1.0f;
     win.z_far = 2000.0f;
 
+    if(strstr(argv[0], "proj1")){
+        force_ratio_100 = 1;
+    }
 
     if(argc > 1){
         if(argv[1][0] == '-' && argv[1][1] == 'h'){

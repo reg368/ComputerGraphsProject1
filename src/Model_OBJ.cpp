@@ -12,6 +12,7 @@ Model_OBJ::Model_OBJ()
     //ctor
     this->TotalConnectedTriangles = 0;
     this->TotalConnectedPoints = 0;
+    this->info = "";
 }
 
 float* Model_OBJ::calculateNormal( float *coord1, float *coord2, float *coord3 )
